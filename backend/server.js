@@ -263,21 +263,14 @@ const connectDB = async () => {
         const mongoURI = process.env.MONGODB_URI
         
         if (!mongoURI) {
-            if (NODE_ENV === 'development') {
-                console.warn('MONGODB_URI no configurado en .env')
-                console.log('Crea un archivo backend/.env con: MONGODB_URI=mongodb+srv://...')
-            }
+            console.log('MONGODB_URI no configurada')
             return
         }
 
         await mongoose.connect(mongoURI)
-        if (NODE_ENV === 'development') {
-            console.log('Conectado a MongoDB Atlas')
-        }
+        console.log('Conectado a MongoDB Atlas')
     } catch (error) {
-        if (NODE_ENV === 'development') {
-            console.error('Error conectando a MongoDB:', error.message)
-        }
+        console.error('Error conectando a MongoDB:', error.message)
     }
 }
 
