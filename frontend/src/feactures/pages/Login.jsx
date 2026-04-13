@@ -9,8 +9,25 @@ function Login() {
     email: '',
     password: ''
   });
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.email) {
+      newErrors.email = 'El correo electrónico es requerido';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Ingresa un correo electrónico válido';
+    }
+    
+    if (!formData.password) {
+      newErrors.password = 'La contraseña es requerida';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,18 +35,19 @@ function Login() {
       ...formData,
       [name]: value
     });
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: '' });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    if (!formData.email || !formData.password) {
-      setError('Por favor complete todos los campos');
-      setLoading(false);
+    
+    if (!validateForm()) {
       return;
     }
+    
+    setLoading(true);
 
     try {
       const response = await fetch(`${API_URL}/login`, {
@@ -41,7 +59,7 @@ function Login() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.message || 'Error al iniciar sesión');
+        setErrors({ general: data.message || 'Credenciales incorrectas' });
         setLoading(false);
         return;
       }
@@ -51,7 +69,7 @@ function Login() {
       
       navigate('/dashboard');
     } catch {
-      setError('Error de conexión. Intenta más tarde.');
+      setErrors({ general: 'Error de conexión. Intenta más tarde.' });
     }
     
     setLoading(false);
@@ -69,26 +87,30 @@ function Login() {
                   <p className="text-muted">Ingresa tus credenciales para continuar</p>
                 </div>
 
-                {error && (
+                {errors.general && (
                   <div className="alert alert-danger" role="alert">
-                    {error}
+                    {errors.general}
                   </div>
                 )}
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} noValidate>
                   <div className="mb-3">
                     <label htmlFor="email" className="form-label">
                       Correo Electrónico
                     </label>
                     <input
                       type="email"
-                      className="form-control"
+                      className={`form-control ${errors.email ? 'is-invalid' : ''}`}
                       id="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="tu@email.com"
+                      autoComplete="email"
                     />
+                    {errors.email && (
+                      <div className="invalid-feedback">{errors.email}</div>
+                    )}
                   </div>
 
                   <div className="mb-3">
@@ -97,24 +119,17 @@ function Login() {
                     </label>
                     <input
                       type="password"
-                      className="form-control"
+                      className={`form-control ${errors.password ? 'is-invalid' : ''}`}
                       id="password"
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
                       placeholder="••••••••"
+                      autoComplete="current-password"
                     />
-                  </div>
-
-                  <div className="mb-3 form-check">
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      id="remember"
-                    />
-                    <label className="form-check-label" htmlFor="remember">
-                      Recordarme
-                    </label>
+                    {errors.password && (
+                      <div className="invalid-feedback">{errors.password}</div>
+                    )}
                   </div>
 
                   <button type="submit" className="btn btn-primary w-100 mb-3" disabled={loading}>

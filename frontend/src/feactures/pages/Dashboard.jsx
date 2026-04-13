@@ -23,10 +23,34 @@ function Dashboard() {
   const [responsables, setResponsables] = useState([]);
 
   const [form, setForm] = useState({ description: '', amount: '', date: '', responsible: '', category: '' });
+  const [formErrors, setFormErrors] = useState({});
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState('');
 
   const getToken = () => localStorage.getItem('token');
+
+  const validateExpenseForm = () => {
+    const newErrors = {};
+    
+    if (!form.description || form.description.trim().length === 0) {
+      newErrors.description = 'La descripción es requerida';
+    }
+    
+    if (!form.amount || parseFloat(form.amount) <= 0) {
+      newErrors.amount = 'El monto debe ser mayor a 0';
+    }
+    
+    if (!form.responsible) {
+      newErrors.responsible = 'El responsable es requerido';
+    }
+    
+    if (!form.category) {
+      newErrors.category = 'La categoría es requerida';
+    }
+    
+    setFormErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const fetchExpenses = useCallback(async (token) => {
     setExpenseLoading(true);
@@ -87,11 +111,16 @@ function Dashboard() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    
+    if (!validateExpenseForm()) {
+      return;
+    }
+    
     const token = getToken();
     if (!token) return;
 
     const expenseData = {
-      description: form.description,
+      description: form.description.trim(),
       amount: parseFloat(form.amount),
       date: form.date || new Date().toISOString(),
       responsible: form.responsible,
@@ -254,28 +283,36 @@ function Dashboard() {
                           <div className="col-auto">
                             <label className="form-label small">Descripción</label>
                             <input 
-                              type="text" className="form-control form-control-sm" 
+                              type="text" className={`form-control form-control-sm ${formErrors.description ? 'is-invalid' : ''}`}
                               value={form.description}
-                              onChange={(e) => setForm({...form, description: e.target.value})}
-                              placeholder="Ej: Almuerzo" required
+                              onChange={(e) => {
+                                setForm({...form, description: e.target.value});
+                                if (formErrors.description) setFormErrors({...formErrors, description: ''});
+                              }}
+                              placeholder="Ej: Almuerzo"
                             />
                           </div>
                           <div className="col-auto">
                             <label className="form-label small">Valor</label>
                             <input 
-                              type="number" className="form-control form-control-sm" 
+                              type="number" className={`form-control form-control-sm ${formErrors.amount ? 'is-invalid' : ''}`}
                               value={form.amount}
-                              onChange={(e) => setForm({...form, amount: e.target.value})}
-                              placeholder="0" required
+                              onChange={(e) => {
+                                setForm({...form, amount: e.target.value});
+                                if (formErrors.amount) setFormErrors({...formErrors, amount: ''});
+                              }}
+                              placeholder="0"
                             />
                           </div>
                           <div className="col-auto" style={{ minWidth: '140px' }}>
                             <label className="form-label small">Responsable</label>
                             <select 
-                              className="form-select form-select-sm"
+                              className={`form-select form-select-sm ${formErrors.responsible ? 'is-invalid' : ''}`}
                               value={form.responsible}
-                              onChange={(e) => setForm({...form, responsible: e.target.value})}
-                              required
+                              onChange={(e) => {
+                                setForm({...form, responsible: e.target.value});
+                                if (formErrors.responsible) setFormErrors({...formErrors, responsible: ''});
+                              }}
                             >
                               <option value="">Seleccionar</option>
                               {responsables.map((name, i) => (
@@ -286,10 +323,12 @@ function Dashboard() {
                           <div className="col-auto" style={{ minWidth: '150px' }}>
                             <label className="form-label small">Categoría</label>
                             <select 
-                              className="form-select form-select-sm"
+                              className={`form-select form-select-sm ${formErrors.category ? 'is-invalid' : ''}`}
                               value={form.category}
-                              onChange={(e) => setForm({...form, category: e.target.value})}
-                              required
+                              onChange={(e) => {
+                                setForm({...form, category: e.target.value});
+                                if (formErrors.category) setFormErrors({...formErrors, category: ''});
+                              }}
                             >
                               <option value="">Seleccionar</option>
                               <option value="Alimentación">Alimentación</option>

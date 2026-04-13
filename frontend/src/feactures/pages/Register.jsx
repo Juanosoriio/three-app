@@ -11,8 +11,39 @@ function Register() {
     password: '',
     confirmPassword: ''
   });
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.name) {
+      newErrors.name = 'El nombre es requerido';
+    } else if (formData.name.length < 2) {
+      newErrors.name = 'El nombre debe tener al menos 2 caracteres';
+    }
+    
+    if (!formData.email) {
+      newErrors.email = 'El correo electrónico es requerido';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Ingresa un correo electrónico válido';
+    }
+    
+    if (!formData.password) {
+      newErrors.password = 'La contraseña es requerida';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'La contraseña debe tener al menos 6 caracteres';
+    }
+    
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Por favor confirma tu contraseña';
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Las contraseñas no coinciden';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,30 +51,19 @@ function Register() {
       ...formData,
       [name]: value
     });
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: '' });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     setLoading(true);
-
-    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
-      setError('Por favor complete todos los campos');
-      setLoading(false);
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Las contraseñas no coinciden');
-      setLoading(false);
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres');
-      setLoading(false);
-      return;
-    }
 
     try {
       const response = await fetch(`${API_URL}/register`, {
@@ -59,7 +79,7 @@ function Register() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.message || 'Error al registrar usuario');
+        setErrors({ general: data.message || 'Error al registrar usuario' });
         setLoading(false);
         return;
       }
@@ -69,7 +89,7 @@ function Register() {
       
       navigate('/dashboard');
     } catch {
-      setError('Error de conexión. Intenta más tarde.');
+      setErrors({ general: 'Error de conexión. Intenta más tarde.' });
     }
     
     setLoading(false);
@@ -87,26 +107,30 @@ function Register() {
                   <p className="text-muted">Regístrate para comenzar</p>
                 </div>
 
-                {error && (
+                {errors.general && (
                   <div className="alert alert-danger" role="alert">
-                    {error}
+                    {errors.general}
                   </div>
                 )}
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} noValidate>
                   <div className="mb-3">
                     <label htmlFor="name" className="form-label">
                       Nombre Completo
                     </label>
                     <input
                       type="text"
-                      className="form-control"
+                      className={`form-control ${errors.name ? 'is-invalid' : ''}`}
                       id="name"
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="Juan Pérez"
+                      autoComplete="name"
                     />
+                    {errors.name && (
+                      <div className="invalid-feedback">{errors.name}</div>
+                    )}
                   </div>
 
                   <div className="mb-3">
@@ -115,13 +139,17 @@ function Register() {
                     </label>
                     <input
                       type="email"
-                      className="form-control"
+                      className={`form-control ${errors.email ? 'is-invalid' : ''}`}
                       id="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="tu@email.com"
+                      autoComplete="email"
                     />
+                    {errors.email && (
+                      <div className="invalid-feedback">{errors.email}</div>
+                    )}
                   </div>
 
                   <div className="mb-3">
@@ -130,13 +158,17 @@ function Register() {
                     </label>
                     <input
                       type="password"
-                      className="form-control"
+                      className={`form-control ${errors.password ? 'is-invalid' : ''}`}
                       id="password"
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
                       placeholder="••••••••"
+                      autoComplete="new-password"
                     />
+                    {errors.password && (
+                      <div className="invalid-feedback">{errors.password}</div>
+                    )}
                   </div>
 
                   <div className="mb-3">
@@ -145,25 +177,17 @@ function Register() {
                     </label>
                     <input
                       type="password"
-                      className="form-control"
+                      className={`form-control ${errors.confirmPassword ? 'is-invalid' : ''}`}
                       id="confirmPassword"
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleChange}
                       placeholder="••••••••"
+                      autoComplete="new-password"
                     />
-                  </div>
-
-                  <div className="mb-3 form-check">
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      id="terms"
-                      required
-                    />
-                    <label className="form-check-label" htmlFor="terms">
-                      Acepto los términos y condiciones
-                    </label>
+                    {errors.confirmPassword && (
+                      <div className="invalid-feedback">{errors.confirmPassword}</div>
+                    )}
                   </div>
 
                   <button type="submit" className="btn btn-primary w-100 mb-3" disabled={loading}>
