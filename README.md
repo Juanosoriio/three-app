@@ -90,6 +90,40 @@ MythreeApp/
 
 ---
 
+## 🚀 Despliegue
+
+### Frontend → Vercel
+1. Ve a https://vercel.com
+2. "Add New..." → "Project"
+3. Importa el repositorio `three-app`
+4. Configura:
+   - Framework Preset: **Vite**
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+5. Añade variable de entorno:
+   - `VITE_API_URL` = URL del backend (ej: `https://three-app.onrender.com`)
+6. Deploy
+
+### Backend → Render
+1. Ve a https://render.com
+2. "New" → "Web Service"
+3. Conecta tu repositorio GitHub
+4. Configura:
+   - Name: `three-app-backend`
+   - Root Directory: `backend`
+   - Build Command: `npm install`
+   - Start Command: `node server.js`
+5. Añade environment variables:
+   - `PORT`: `5000`
+   - `MONGODB_URI`: Tu string de conexión MongoDB Atlas
+   - `JWT_SECRET`: Una clave segura aleatoria
+6. Deploy
+
+### Configuración Cross-Origin
+Si frontend y backend están en dominios diferentes, el backend ya tiene CORS configurado para aceptar peticiones de cualquier origen.
+
+---
+
 ## ⚙️ Instalación y Ejecución
 
 ### Prerrequisitos
