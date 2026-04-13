@@ -1,22 +1,63 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 function Dashboard() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const getUserFromStorage = () => {
+    try {
+      const userData = localStorage.getItem('user');
+      return userData ? JSON.parse(userData) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const [user, setUser] = useState(getUserFromStorage);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('gastos');
 
   const [expenses, setExpenses] = useState([]);
-  const [summary, setSummary] = useState([]);
   const [expenseLoading, setExpenseLoading] = useState(false);
   const [responsables, setResponsables] = useState([]);
 
   const [form, setForm] = useState({ description: '', amount: '', date: '', responsible: '', category: '' });
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState('');
+
+  const getToken = () => localStorage.getItem('token');
+
+  const fetchExpenses = useCallback(async (token) => {
+    setExpenseLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/expenses`, {
+        headers: { Authorization: `Bearer ${token || getToken()}` }
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setExpenses(data.expenses || []);
+      }
+    } catch {
+      setError('Error al cargar los gastos');
+    }
+    setExpenseLoading(false);
+  }, []);
+
+  const fetchUsers = useCallback(async (token) => {
+    try {
+      const res = await fetch(`${API_URL}/users`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok && data.users) {
+        const userNames = data.users.map(u => u.name);
+        setResponsables(['Juan', 'Maria', 'Carlos', 'Ana', ...userNames]);
+      }
+    } catch {
+      setResponsables(['Juan', 'Maria', 'Carlos', 'Ana']);
+    }
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -27,52 +68,21 @@ function Dashboard() {
       return;
     }
 
+    let parsedUser;
     try {
-      setUser(JSON.parse(userData));
-    } catch (e) {
+      parsedUser = JSON.parse(userData);
+    } catch {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       navigate('/login');
+      return;
     }
+
+    setUser(parsedUser);
     setLoading(false);
-    if (!token) return;
     fetchExpenses(token);
     fetchUsers(token);
-  }, [navigate]);
-
-  const fetchUsers = async (token) => {
-    try {
-      const res = await fetch(`${API_URL}/users`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (res.ok && data.users) {
-        const userNames = data.users.map(u => u.name);
-        setResponsables(['Juan', 'Maria', 'Carlos', 'Ana', ...userNames]);
-      }
-    } catch (err) {
-      setResponsables(['Juan', 'Maria', 'Carlos', 'Ana']);
-    }
-  };
-
-  const getToken = () => localStorage.getItem('token');
-
-  const fetchExpenses = async (token) => {
-    setExpenseLoading(true);
-    try {
-      const res = await fetch(`${API_URL}/expenses`, {
-        headers: { Authorization: `Bearer ${token || getToken()}` }
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setExpenses(data.expenses || []);
-        setSummary(data.summary || []);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-    setExpenseLoading(false);
-  };
+  }, [navigate, fetchExpenses, fetchUsers]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -118,7 +128,7 @@ function Dashboard() {
       } else {
         setError(data.message);
       }
-    } catch (err) {
+    } catch {
       setError('Error de conexión');
     }
   };
@@ -145,8 +155,8 @@ function Dashboard() {
       if (res.ok) {
         fetchExpenses(token);
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
+      setError('Error al eliminar el gasto');
     }
   };
 

@@ -50,9 +50,8 @@ function Login() {
       localStorage.setItem('user', JSON.stringify(data.user));
       
       navigate('/dashboard');
-    } catch (err) {
-      setError('Error de conexión. Asegúrate de que el backend esté corriendo.');
-      console.error('Login error:', err);
+    } catch {
+      setError('Error de conexión. Intenta más tarde.');
     }
     
     setLoading(false);

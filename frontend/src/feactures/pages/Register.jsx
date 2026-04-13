@@ -68,9 +68,8 @@ function Register() {
       localStorage.setItem('user', JSON.stringify(data.user));
       
       navigate('/dashboard');
-    } catch (err) {
-      setError('Error de conexión. Asegúrate de que el backend esté corriendo.');
-      console.error('Register error:', err);
+    } catch {
+      setError('Error de conexión. Intenta más tarde.');
     }
     
     setLoading(false);

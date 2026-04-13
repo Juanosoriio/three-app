@@ -13,6 +13,7 @@ app.use(cors())
 
 const PORT = process.env.PORT || 5000
 const JWT_SECRET = process.env.JWT_SECRET || 'mythreeapp_secret_key_2026'
+const NODE_ENV = process.env.NODE_ENV || 'development'
 
 const authenticate = (req, res, next) => {
     const authHeader = req.headers.authorization
@@ -130,7 +131,9 @@ app.post('/api/recover', async (req, res) => {
         
         await User.findByIdAndUpdate(user._id, { resetToken, resetTokenExpiry })
 
-        console.log(`🔐 Token de recuperación para ${email}: ${resetToken}`)
+        if (NODE_ENV === 'development') {
+            console.log(`Token de recuperación para ${email}: ${resetToken}`)
+        }
         
         res.json({ 
             message: 'Si el correo existe, recibirás un enlace para restablecer tu contraseña',
@@ -260,15 +263,21 @@ const connectDB = async () => {
         const mongoURI = process.env.MONGODB_URI
         
         if (!mongoURI) {
-            console.warn('⚠️ MONGODB_URI no configurado en .env')
-            console.log('📝 Crea un archivo backend/.env con: MONGODB_URI=mongodb+srv://...')
+            if (NODE_ENV === 'development') {
+                console.warn('MONGODB_URI no configurado en .env')
+                console.log('Crea un archivo backend/.env con: MONGODB_URI=mongodb+srv://...')
+            }
             return
         }
 
         await mongoose.connect(mongoURI)
-        console.log('✅ Conectado a MongoDB Atlas')
+        if (NODE_ENV === 'development') {
+            console.log('Conectado a MongoDB Atlas')
+        }
     } catch (error) {
-        console.error('❌ Error conectando a MongoDB:', error.message)
+        if (NODE_ENV === 'development') {
+            console.error('Error conectando a MongoDB:', error.message)
+        }
     }
 }
 
@@ -278,6 +287,8 @@ app.get('/api/health', (req, res) => {
 
 connectDB().then(() => {
     app.listen(PORT, () => {
-        console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`)
+        if (NODE_ENV === 'development') {
+            console.log(`Servidor corriendo en http://localhost:${PORT}`)
+        }
     })
 })

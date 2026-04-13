@@ -56,8 +56,7 @@ export const ApiRyC_Axios = () => {
                 setInfo(infoData)
             } catch (err) {
                 if (axios.isCancel(err)) return
-                setError(err.message)
-                console.error('API Error:', err.message)
+                setError('Error al cargar los personajes')
             } finally {
                 setLoading(false)
             }

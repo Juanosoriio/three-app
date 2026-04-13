@@ -62,9 +62,8 @@ function RecoverPassword() {
       }
 
       setEnviado(true)
-    } catch (err) {
-      setError('Error de conexión. Asegúrate de que el backend esté corriendo.')
-      console.error('Recover error:', err)
+    } catch {
+      setError('Error de conexión. Intenta más tarde.')
     }
 
     setLoading(false)
@@ -109,9 +108,8 @@ function RecoverPassword() {
       }
 
       setSuccess(true)
-    } catch (err) {
-      setError('Error de conexión. Asegúrate de que el backend esté corriendo.')
-      console.error('Reset error:', err)
+    } catch {
+      setError('Error de conexión. Intenta más tarde.')
     }
 
     setLoading(false)
