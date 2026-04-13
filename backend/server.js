@@ -13,6 +13,12 @@ app.use(cors())
 
 const PORT = process.env.PORT || 5000
 const JWT_SECRET = process.env.JWT_SECRET || 'mythreeapp_secret_key_2026'
+const MONGODB_URI = process.env.MONGODB_URI
+
+console.log('=== INICIO DEL SERVIDOR ===')
+console.log('MONGODB_URI configurada:', MONGODB_URI ? 'SI' : 'NO')
+console.log('Puerto:', PORT)
+console.log('===========================')
 const NODE_ENV = process.env.NODE_ENV || 'development'
 
 const authenticate = (req, res, next) => {
@@ -263,10 +269,13 @@ const connectDB = async () => {
         const mongoURI = process.env.MONGODB_URI
         
         if (!mongoURI) {
-            console.log('MONGODB_URI no configurada')
+            console.log('MONGODB_URI no configurada - NO HAY VARIABLE')
             return
         }
 
+        console.log('Intentando conectar a MongoDB...')
+        console.log('URI:', mongoURI.substring(0, 30) + '...')
+        
         await mongoose.connect(mongoURI)
         console.log('Conectado a MongoDB Atlas')
     } catch (error) {
