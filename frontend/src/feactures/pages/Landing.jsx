@@ -27,6 +27,10 @@ function Landing() {
                   <i className="bi bi-box-arrow-in-right me-2"></i>
                   Ya tengo cuenta
                 </Link>
+                <Link to="/rick-morty" className="btn btn-warning btn-lg px-4">
+                  <i className="bi bi-brilliance me-2"></i>
+                  Rick & Morty API
+                </Link>
               </div>
               <div className="mt-4 d-flex gap-4 text-muted">
                 <div><i className="bi bi-check-circle text-success me-2"></i>Sin tarjeta</div>
@@ -149,6 +153,41 @@ function Landing() {
                   Visualiza el total de gastos, filtra por fecha y consulta el historial completo en cualquier momento.
                 </p>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Rick and Morty API Section */}
+      <section className="py-5">
+        <div className="container">
+          <div className="row align-items-center">
+            <div className="col-lg-6 order-lg-2">
+              <div className="text-center">
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/en/8/84/Rick_and_Morty_characters.jpg" 
+                  alt="Rick and Morty" 
+                  className="img-fluid rounded-4 shadow"
+                  style={{maxHeight: '300px'}}
+                  onError={(e) => {
+                    e.target.src = 'https://rickandmortyapi.com/api/character/avatar/1.jpeg';
+                  }}
+                />
+              </div>
+            </div>
+            <div className="col-lg-6 order-lg-1 mt-4 mt-lg-0">
+              <span className="badge bg-warning bg-opacity-10 text-warning mb-3 px-3 py-2 rounded-pill">
+                <i className="bi bi-stars me-1"></i> API Integration
+              </span>
+              <h2 className="fw-bold mb-4">Explora la API de Rick and Morty</h2>
+              <p className="text-muted mb-4">
+                ¡También integramos la API pública de Rick and Morty! Explora todos los personajes, 
+                lokalizaciones y episodios de tu serie favorita.
+              </p>
+              <Link to="/rick-morty" className="btn btn-warning btn-lg px-4">
+                <i className="bi bi-rocket-takeoff me-2"></i>
+                Ver Personajes
+              </Link>
             </div>
           </div>
         </div>
