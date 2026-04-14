@@ -37,7 +37,7 @@ function App() {
                 <Dashboard />
               </ProtectedRoute>
             } />
-            <Route path="/api" element={<ApiRyC_Axios />} />
+            <Route path="/rick-morty" element={<ApiRyC_Axios />} />
           </Routes>
         </main>
         <Footer />
