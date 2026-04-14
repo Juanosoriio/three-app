@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://three-app-z1gz.onrender.com';
+const API_URL = import.meta.env.VITE_API_URL 
+  ? import.meta.env.VITE_API_URL.replace(/\/$/, '') 
+  : 'https://three-app-z1gz.onrender.com';
 
 function RecoverPassword() {
   const [searchParams] = useSearchParams();

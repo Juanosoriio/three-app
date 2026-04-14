@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://three-app-z1gz.onrender.com';
+const API_URL = import.meta.env.VITE_API_URL 
+  ? import.meta.env.VITE_API_URL.replace(/\/$/, '') 
+  : 'https://three-app-z1gz.onrender.com';
 
 function Dashboard() {
   const navigate = useNavigate();
