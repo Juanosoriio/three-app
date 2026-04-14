@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+const API_URL = 'https://three-app-z1gz.onrender.com';
 
 function Register() {
   const navigate = useNavigate();
