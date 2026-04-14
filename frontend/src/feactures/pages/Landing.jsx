@@ -27,10 +27,10 @@ function Landing() {
                   <i className="bi bi-box-arrow-in-right me-2"></i>
                   Ya tengo cuenta
                 </Link>
-                <Link to="/rick-morty" className="btn btn-warning btn-lg px-4">
-                  <i className="bi bi-brilliance me-2"></i>
-                  Rick & Morty API
-                </Link>
+                <a href="https://github.com/Juanosoriio/three-app" target="_blank" rel="noopener noreferrer" className="btn btn-dark btn-lg px-4">
+                  <i className="bi bi-github me-2"></i>
+                  Ver en GitHub
+                </a>
               </div>
               <div className="mt-4 d-flex gap-4 text-muted">
                 <div><i className="bi bi-check-circle text-success me-2"></i>Sin tarjeta</div>
