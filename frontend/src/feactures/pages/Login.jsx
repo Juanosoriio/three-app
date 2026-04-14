@@ -51,16 +51,13 @@ function Login() {
     setErrors({...errors, general: ''});
 
     try {
-      console.log('Intentando login a:', `${API_URL}/login`);
       const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
 
-      console.log('Respuesta recibida:', response.status);
       const data = await response.json();
-      console.log('Data:', data);
 
       if (!response.ok) {
         setErrors({ general: data.message || 'Credenciales incorrectas' });
@@ -73,8 +70,7 @@ function Login() {
       
       navigate('/dashboard');
     } catch (err) {
-      console.error('Error:', err);
-      setErrors({ general: 'Error de conexión. Intenta más tarde: ' + err.message });
+      setErrors({ general: 'Error de conexión. Intenta más tarde.' });
     }
     
     setLoading(false);
