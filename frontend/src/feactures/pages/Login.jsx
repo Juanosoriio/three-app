@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-const API_URL = 'https://three-app-z1gz.onrender.com';
+const API_URL = '/api';
 
 function Login() {
   const navigate = useNavigate();

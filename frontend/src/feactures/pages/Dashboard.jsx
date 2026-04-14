@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-const API_URL = 'https://three-app-z1gz.onrender.com';
+const API_URL = '/api';
 
 function Dashboard() {
   const navigate = useNavigate();

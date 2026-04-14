@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 
-const API_URL = 'https://three-app-z1gz.onrender.com';
+const API_URL = '/api';
 
 function RecoverPassword() {
   const [searchParams] = useSearchParams();
