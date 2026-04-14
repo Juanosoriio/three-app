@@ -43,7 +43,7 @@ function RecoverPassword() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/recover`, {
+      const response = await fetch(`${API_URL}/api/recover`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -93,7 +93,7 @@ function RecoverPassword() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/reset-password`, {
+      const response = await fetch(`${API_URL}/api/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, newPassword: password })

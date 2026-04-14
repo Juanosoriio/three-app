@@ -55,7 +55,7 @@ function Dashboard() {
   const fetchExpenses = useCallback(async (token) => {
     setExpenseLoading(true);
     try {
-      const res = await fetch(`${API_URL}/expenses`, {
+      const res = await fetch(`${API_URL}/api/expenses`, {
         headers: { Authorization: `Bearer ${token || getToken()}` }
       });
       const data = await res.json();
@@ -70,7 +70,7 @@ function Dashboard() {
 
   const fetchUsers = useCallback(async (token) => {
     try {
-      const res = await fetch(`${API_URL}/users`, {
+      const res = await fetch(`${API_URL}/api/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -130,7 +130,7 @@ function Dashboard() {
     try {
       let res;
       if (editingId) {
-        res = await fetch(`${API_URL}/expenses/${editingId}`, {
+        res = await fetch(`${API_URL}/api/expenses/${editingId}`, {
           method: 'PUT',
           headers: { 
             'Content-Type': 'application/json',
@@ -139,7 +139,7 @@ function Dashboard() {
           body: JSON.stringify(expenseData)
         });
       } else {
-        res = await fetch(`${API_URL}/expenses`, {
+        res = await fetch(`${API_URL}/api/expenses`, {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -177,7 +177,7 @@ function Dashboard() {
     if (!confirm('¿Eliminar gasto?')) return;
     const token = getToken();
     try {
-      const res = await fetch(`${API_URL}/expenses/${id}`, {
+      const res = await fetch(`${API_URL}/api/expenses/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
